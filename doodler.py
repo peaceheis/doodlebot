@@ -56,16 +56,19 @@ def remove_item(arg) :
 
 @bot.command(name = 'commence')
 async def commence(ctx): 
-    global promptlist
-    good_times = [0, 30] 
+    global promptlist 
     while True :
-        if time.gmtime().tm_hour == 11 and time.gmtime.tm_min <= 29:
+        good_times = [0,3,6]
+        if time.gmtime().tm_hour == 11 and time.gmtime().tm_min <= 29 and time.gmtime().tm_hr /2:
             random_num = random.randint(0, len(promptlist) - 1)
-            await ctx.send(promptlist[random_num])
+            channel = bot.get_channel(816135387339685930)
+            await channel.send(promptlist[random_num])
             del promptlist[random_num]
             time.sleep(1800)
-        if time.gmtime().tm_sec in good_times : 
-            await ctx.send(str(promptlist))
+        if time.gmtime().tm_day in good_times and time.gmtime().tm_hour == 1 and time.gmtime().min == 0 and time.gmtime.sec == 0 : 
+            channel = bot.get_channel(818546231868391454)
+            await channel.send(str(promptlist).replace('[', '').replace(']', '').replace(',', '')) 
+            time.sleep(60)
 
     
 bot.run(TOKEN)
