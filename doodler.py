@@ -3,11 +3,10 @@ from dotenv import load_dotenv
 import os, asyncio
 from discord.ext import commands, tasks 
 from itertools import cycle
-import threading, time, random
+import time, random
 
 load_dotenv()
-TOKEN = "ODIwNzg2NzI2NTA3MjQ5NzE1.YE6PNQ.z3nA_QTxdAKENs5yMAJYDgkOD8k"
-lock = threading.Lock()
+TOKEN = "ODIwNzg2NzI2NTA3MjQ5NzE1.YE6PNQ.Px27uClBCgezRMTumUkIS6kyhS4"
 
 promptlist = []
 bot = commands.Bot(command_prefix='?')
@@ -25,8 +24,8 @@ async def prompts(ctx) :
         await ctx.send("None!")
         return
     response = "**Prompts**: \n" + str(promptlist).replace('[', '').replace(']', '')
-    if len(response) <= 1980 :
-        await ctx.send(response) 
+    if False :
+        pass
     else : 
         response_list = promptlist
         current_char = 0 
