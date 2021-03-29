@@ -1,8 +1,7 @@
 import discord
 from discord.ext import commands, tasks 
-import datetime, random
+import datetime, random, asyncio 
 
-load_dotenv()
 TOKEN = "ODIwNzg2NzI2NTA3MjQ5NzE1.YE6PNQ.Px27uClBCgezRMTumUkIS6kyhS4"
 
 promptlist = []
