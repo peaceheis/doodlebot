@@ -1,9 +1,6 @@
 import discord
-from dotenv import load_dotenv
-import os, asyncio
 from discord.ext import commands, tasks 
-from itertools import cycle
-import time, random
+import datetime, random
 
 load_dotenv()
 TOKEN = "ODIwNzg2NzI2NTA3MjQ5NzE1.YE6PNQ.Px27uClBCgezRMTumUkIS6kyhS4"
@@ -82,18 +79,25 @@ async def commence(ctx):
     global promptlist
     channel = bot.get_channel(818546231868391454)
     await back_up(ctx)
+    rn = datetime.datetime.now()
     while True :
         good_times = [0, 2, 4]
-        if time.gmtime().tm_hour == 11 and time.gmtime().tm_min <= 29 and len(promptlist) > 0 :
+        if rn.hour == 6 and rn.min <= 29 and len(promptlist) > 0 :
             random_num = random.randint(0, len(promptlist) - 1)
             channel = bot.get_channel(816135387339685930)
             await channel.send(promptlist[random_num]) 
+            if len(promptlist) <= 10 and len(promptlist) != 1 : 
+                await ctx.send(f"**Warning!** Only **{len(promptlist)}** prompts left!")
+            elif len(promptlist) == 1 : 
+                await ctx.send(f"**Strong Warning!** Only 1 prompt left!")
+            elif len(promptlist) == 0 : 
+                await ctx.send(f"**CRITICAL WARNING!** 0 prompts left!!")
             del promptlist[random_num]
-            time.sleep(1800)
-        if time.gmtime().tm_wday in good_times and time.gmtime().tm_hour == 1 and time.gmtime().tm_min <= 10 : 
+            time.sleep(3600)
+        i rn.weekday in good_times and rn.hour == 1 and rn.minute <= 10 : 
             channel = bot.get_channel(818546231868391454)
             await back_up(ctx)
-            time.sleep(600)
+            time.sleep(700)
             
 
 @bot.command(name = 'back_up') 
