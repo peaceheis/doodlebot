@@ -100,7 +100,7 @@ async def commence(ctx):
                 await ctx.send(f"**CRITICAL WARNING!** 0 prompts left!!")
             del promptlist[random_num]
             time.sleep(3600)
-        i rn.weekday in good_times and rn.hour == 1 and rn.minute <= 10 : 
+        if rn.weekday in good_times and rn.hour == 1 and rn.minute <= 10 : 
             channel = bot.get_channel(818546231868391454)
             await back_up(ctx)
             time.sleep(700)
