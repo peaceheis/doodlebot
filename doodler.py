@@ -16,7 +16,10 @@ async def add(ctx, prompt) :
 @bot.command(name = 'prompt')
 async def prompt(ctx, num) : 
     global promptlist
-    response = f"Prompt {num}: {promptlist[num]}"
+    if num < len(promptlist) : 
+        response = f"Prompt {num}: {promptlist[num]}"
+    else : 
+        response = f"{num} is out of range!"
     await ctx.send(response)
     
 @bot.command(name='prompts')
