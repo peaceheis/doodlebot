@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands, tasks 
 import datetime, random, asyncio 
 
-TOKEN = "ODIwNzg2NzI2NTA3MjQ5NzE1.YE6PNQ.Px27uClBCgezRMTumUkIS6kyhS4"
+TOKEN = ""
 
 promptlist = []
 bot = commands.Bot(command_prefix='?')
@@ -13,6 +13,31 @@ async def add(ctx, prompt) :
     response = "Added " + prompt + "!"
     await ctx.send(response)
 
+@bot.command(name = 'remove_multiple') 
+async def remove_multiple(ctx, *args) :
+    global promptlist
+    for arg in args: 
+        try :
+            del promptlist[int(arg)]
+        except : 
+            pass
+    await ctx.send("Cleared requested prompts!")
+    
+@bot.command(name = 'clear_prompts')
+async def clear_prompts(ctx) : 
+    global promptlist
+    promplist = []
+    await ctx.send("Cleared all prompts!")
+    
+@bot.command(name = 'prompt')
+async def prompt(ctx, arg) : 
+    global promptlist
+    arg = int(arg)
+    if arg >= len(promptlist) : 
+        await ctx.send("Out of range!")
+        return
+    await ctx.send(f"Prompt {arg}: {promptlist[arg]}")
+    
 @bot.command(name = 'prompt')
 async def prompt(ctx, num) : 
     global promptlist
