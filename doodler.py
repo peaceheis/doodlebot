@@ -14,6 +14,12 @@ async def add(ctx, prompt) :
     response = "Added " + prompt + "!"
     await ctx.send(response)
 
+@bot.command(name = 'prompt')
+async def prompt(ctx, num) : 
+    global promptlist
+    response = f"Prompt {num}: {promptlist[num]}"
+    await ctx.send(response)
+    
 @bot.command(name='prompts')
 async def prompts(ctx) :
     global promptlist
