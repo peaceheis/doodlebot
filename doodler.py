@@ -5,7 +5,35 @@ import datetime, random, asyncio
 TOKEN = ""
 
 promptlist = []
+
 bot = commands.Bot(command_prefix='?')
+
+async def send_prompts():
+    global promptlist
+    await bot.wait_until_ready()
+    rn = datetime.datetime.now()
+    channel = bot.get_channel(818546231868391454)
+    good_times = [0, 2, 4]
+    while True : 
+        if rn.hour == 18 and rn.min <= 50 and len(promptlist) > 0 :
+            random_num = random.randint(0, len(promptlist) - 1)
+            channel = bot.get_channel(816135387339685930)
+            await channel.send(promptlist[random_num])
+            del promptlist[random_num]
+            if len(promptlist) <= 10 and len(promptlist) != 1 : 
+                await ctx.send(f"**Warning!** Only **{len(promptlist)}** prompts left!")
+            elif len(promptlist) == 1 : 
+                await ctx.send(f"**Strong Warning!** Only 1 prompt left!")
+            elif len(promptlist) == 0 : 
+                await ctx.send(f"**CRITICAL WARNING!** 0 prompts left!!")
+            del promptlist[random_num]
+            time.sleep(10)
+        if rn.weekday in good_times and rn.hour == 18 and rn.minute <= 50 : 
+            channel = bot.get_channel(818546231868391454)
+            await back_up(ctx)
+            time.sleep(15)
+        
+        
 @bot.command(name = 'add')
 async def add(ctx, prompt) :
     global promptlist
@@ -28,15 +56,6 @@ async def clear_prompts(ctx) :
     global promptlist
     promplist = []
     await ctx.send("Cleared all prompts!")
-    
-@bot.command(name = 'prompt')
-async def prompt(ctx, arg) : 
-    global promptlist
-    arg = int(arg)
-    if arg >= len(promptlist) : 
-        await ctx.send("Out of range!")
-        return
-    await ctx.send(f"Prompt {arg}: {promptlist[arg]}")
     
 @bot.command(name = 'prompt')
 async def prompt(ctx, num) : 
@@ -104,35 +123,8 @@ async def load_prompts(ctx, *args) :
 async def num_prompts(ctx) :
     global promptlist
     await ctx.send("There are " + str(len(promptlist)) + " prompts!")
-                   
-
-
-@bot.command(name = 'commence')
-async def commence(ctx): 
-    global promptlist
-    channel = bot.get_channel(818546231868391454)
-    await back_up(ctx)
-    rn = datetime.datetime.now()
-    while True :
-        good_times = [0, 2, 4]
-        if rn.hour == 6 and rn.min <= 29 and len(promptlist) > 0 :
-            random_num = random.randint(0, len(promptlist) - 1)
-            channel = bot.get_channel(816135387339685930)
-            await channel.send(promptlist[random_num]) 
-            if len(promptlist) <= 10 and len(promptlist) != 1 : 
-                await ctx.send(f"**Warning!** Only **{len(promptlist)}** prompts left!")
-            elif len(promptlist) == 1 : 
-                await ctx.send(f"**Strong Warning!** Only 1 prompt left!")
-            elif len(promptlist) == 0 : 
-                await ctx.send(f"**CRITICAL WARNING!** 0 prompts left!!")
-            del promptlist[random_num]
-            time.sleep(3600)
-        if rn.weekday in good_times and rn.hour == 1 and rn.minute <= 10 : 
-            channel = bot.get_channel(818546231868391454)
-            await back_up(ctx)
-            time.sleep(700)
-            
-
+                  
+           
 @bot.command(name = 'back_up') 
 async def back_up(ctx) : 
     channel = bot.get_channel(818546231868391454)
@@ -167,6 +159,6 @@ async def back_up(ctx) :
  
  
 
-    
+bot.loop.create_task(send_prompts())
 bot.run(TOKEN)
 
