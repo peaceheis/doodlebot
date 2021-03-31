@@ -14,7 +14,7 @@ async def send_prompts():
     good_times = [0, 2, 4]
     if rn.hour == bot.hour and len(bot.promptlist) > 0 : 
         send_prompt()
-    if rn.weekday in good_times and rn.hour == 18 
+    if rn.weekday in good_times and rn.hour == 18 :
         backup = bot.get_channel(818546231868391454)
         await back_up(ctx)
         
