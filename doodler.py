@@ -19,7 +19,7 @@ async def send_prompts():
         await back_up(ctx)
         
 @bot.command(name = 'force_prompt') 
-async def send_prompt() : 
+async def send_prompt(ctx) : 
         random_num = random.randint(0, len(bot.promptlist) - 1)
         channel = bot.get_channel(820804818045239367)
         output = bot.get_channel(816135387339685930)
@@ -31,13 +31,17 @@ async def send_prompt() :
             await channel.send(f"**Strong Warning!** Only **1** prompt left!")
         elif len(bot.promptlist) == 0 : 
             await channel.send(f"**CRITICAL WARNING!** 0 prompts left!!")
-        
+
+def are_numbers(x) : 
+    numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    return all(c in numbers for c in x)
+
 @bot.command(name = 'set_hour')
 async def set_hour(ctx, arg) :
-    if 0 <= int(arg) and int(arg) <= 23 and int(arg) == arg : 
+    if 0 <= int(arg) and int(arg) <= 23 and are_numbers(x) : 
         bot.hour = arg
         await ctx.send(f"Set output hour to {arg} CST!")
-    elif int(arg) != arg : 
+    elif are_numbers(x) == False : 
         await ctx.send(f"**Error!** Use only numbers in hour setting, please!")
     else : 
         await ctx.send(f"**Out of range!** Use numbers 0 - 23, with 0 being midnight.")
