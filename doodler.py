@@ -1,4 +1,4 @@
-import discord
+seimport discord
 from discord.ext import commands, tasks 
 import datetime, random, asyncio 
 
@@ -59,7 +59,7 @@ async def set_status(ctx, arg) :
 @bot.command(name = 'set_prefix') 
 async def set_prefix(ctx, arg) : 
     bot.command_prefix = arg                                
-    await ctx.send(f"Prefix changed to {prefix}!")
+    await ctx.send(f"Prefix changed to {arg}!")
                    
 @bot.command(name = 'add')
 async def add(ctx, prompt) :
