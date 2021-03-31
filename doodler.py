@@ -14,6 +14,9 @@ async def send_prompts():
     good_times = [0, 2, 4]
     if rn.hour == bot.hour and len(bot.promptlist) > 0 : 
         send_prompt()
+    elif len(bot.promptlist) == 0 :
+        channel = bot.get_channel(820804818045239367)
+        await channel.send("**NO PROMPTS LEFT**")
     if rn.weekday in good_times and rn.hour == 18 :
         backup = bot.get_channel(818546231868391454)
         await back_up(ctx)
@@ -49,7 +52,7 @@ async def set_hour(ctx, arg) :
 @bot.command(name = 'set_status')
 async def set_status(ctx, arg) : 
     bot.game = discord.Game(arg)
-    await bot.change_presence(activity=game)
+    await bot.change_presence(activity=bot.game)
     await ctx.send(f"Changed status to {arg}!")
         
 @bot.command(name = 'set_prefix') 
