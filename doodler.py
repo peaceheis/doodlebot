@@ -50,7 +50,7 @@ async def set_hour(ctx, arg) :
 async def set_status(ctx, arg) : 
     bot.game = discord.Game(arg)
     await bot.change_presence(activity=game)
-    await ctx.send(f"Changed status to {arg}!}
+    await ctx.send(f"Changed status to {arg}!"}
         
 @bot.command(name = 'set_prefix') 
 async def set_prefix(ctx, arg) : 
