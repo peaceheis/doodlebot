@@ -2,20 +2,24 @@ import discord
 from discord.ext import commands, tasks 
 import datetime, random, asyncio 
 
-
-
-
 bot = commands.Bot(command_prefix='?')
 bot.promptlist = []
+bot.hour = 6
+bot.game = discord.Game("Driving Snooze Crazy")
 
-@tasks.loop(seconds = 3600)
+@tasks.loop(seconds = 3600 )
 async def send_prompts():
     await bot.wait_until_ready()
     rn = datetime.datetime.now()
     good_times = [0, 2, 4]
-    game = discord.Game("Driving Snooze Crazy")
-    await bot.change_presence(status=discord.Status.idle, activity=game)
-    if rn.hour == 6 and rn.minute <= 1 and len(bot.promptlist) > 0 :
+    if rn.hour == bot.hour and len(bot.promptlist) > 0 : 
+        send_prompt()
+    if rn.weekday in good_times and rn.hour == 18 
+        backup = bot.get_channel(818546231868391454)
+        await back_up(ctx)
+        
+@bot.command(name = 'force_prompt') 
+async def send_prompt() : 
         random_num = random.randint(0, len(bot.promptlist) - 1)
         channel = bot.get_channel(820804818045239367)
         output = bot.get_channel(816135387339685930)
@@ -27,16 +31,30 @@ async def send_prompts():
             await channel.send(f"**Strong Warning!** Only **1** prompt left!")
         elif len(bot.promptlist) == 0 : 
             await channel.send(f"**CRITICAL WARNING!** 0 prompts left!!")
-        asyncio.sleep(100)
-    if rn.weekday in good_times and rn.hour == 18 and rn.minute < 1 : 
-        backup = bot.get_channel(818546231868391454)
-        await back_up(ctx)
-        asyncio.sleep(60)
         
+@bot.command(name = 'set_hour')
+async def set_hour(ctx, arg) :
+    if 0 <= int(arg) and int(arg) <= 23 and int(arg) == arg : 
+        bot.hour = arg
+        await ctx.send(f"Set output hour to {arg} CST!")
+    elif int(arg) != arg : 
+        await ctx.send(f"**Error!** Use only numbers in hour setting, please!")
+    else : 
+        await ctx.send(f"**Out of range!** Use numbers 0 - 23, with 0 being midnight.")
         
+@bot.command(name = 'set_status')
+async def set_status(ctx, arg) : 
+    bot.game = discord.Game(arg)
+    await bot.change_presence(activity=game)
+    await ctx.send(f"Changed status to {arg}!}
+        
+@bot.command(name = 'set_prefix') 
+async def set_prefix(ctx, arg) : 
+    bot.command_prefix = arg                                
+    await ctx.send(f"Prefix changed to {prefix}!")
+                   
 @bot.command(name = 'add')
 async def add(ctx, prompt) :
-    
     bot.promptlist.append(prompt) 
     response = "Added " + prompt + "!"
     await ctx.send(response)
