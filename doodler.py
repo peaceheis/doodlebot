@@ -41,7 +41,7 @@ def are_numbers(x) :
 
 @bot.command(name = 'set_hour')
 async def set_hour(ctx, arg) :
-    if 0 <= int(arg) and int(arg) <= 23 and are_numbers(x) : 
+    if 0 <= int(arg) and int(arg) <= 23 and are_numbers(arg) : 
         bot.hour = arg
         await ctx.send(f"Set output hour to {arg} CST!")
     elif are_numbers(arg) == False : 
