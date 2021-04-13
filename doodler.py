@@ -7,7 +7,7 @@ from discord.ext import commands, tasks
 
 bot = commands.Bot(command_prefix='?')
 bot.promptlist = []
-bot.hour = 6
+bot.hour = 17
 bot.game = discord.Game("Driving Snooze Crazy")
 
 @tasks.loop(seconds = 3600 )
