@@ -1,6 +1,9 @@
+import datetime
+import random
+import asyncio
+
 import discord
 from discord.ext import commands, tasks 
-import datetime, random, asyncio 
 
 bot = commands.Bot(command_prefix='?')
 bot.promptlist = []
@@ -13,13 +16,50 @@ async def send_prompts():
     rn = datetime.datetime.now()
     good_times = [0, 2, 4]
     if rn.hour == bot.hour and len(bot.promptlist) > 0 : 
-        send_prompt()
+        random_num = random.randint(0, len(bot.promptlist) - 1)
+        channel = bot.get_channel(820804818045239367)
+        output = bot.get_channel(816135387339685930)
+        await output.send(bot.promptlist[random_num])
+        del bot.promptlist[random_num]
+        if len(bot.promptlist) <= 10 and len(bot.promptlist) != 1 : 
+            await channel.send(f"**Warning!** Only **{len(bot.promptlist)}** prompts left!")
+        elif len(bot.promptlist) == 1 : 
+            await channel.send(f"**Strong Warning!** Only **1** prompt left!")
+        elif len(bot.promptlist) == 0 : 
+            await channel.send(f"**CRITICAL WARNING!** 0 prompts left!!")
     elif len(bot.promptlist) == 0 :
         channel = bot.get_channel(820804818045239367)
         await channel.send("**NO PROMPTS LEFT**")
     if rn.weekday in good_times and rn.hour == 18 :
         backup = bot.get_channel(818546231868391454)
-        await back_up(ctx)
+        channel = bot.get_channel(818546231868391454)
+    
+    if len(bot.promptlist) == 0 : 
+        await channel.send("Nothing to back up!")
+        return
+    response = "**Backup**: \n" + str(bot.promptlist).replace('[', '').replace(']', '')
+    if len(response) <= 1980 :
+        await channel.send(response) 
+    else : 
+        response_list = bot.promptlist
+        current_char = 0 
+        count = 0
+        count1 = 0 
+        should_continue = True
+        while should_continue :
+            current_response = ""         
+            for i in range(25) :
+                try :
+                    current_response += '\"'
+                    current_response += response_list[count1].replace('\'', "")
+                    current_response += '\" '
+                    count1 += 1
+                except : 
+                    await channel.send(current_response)
+                    return
+            count += 1
+            current_response = current_response + "(" + str(count) + ")"
+            await channel.send(current_response) 
         
 @bot.command(name = 'force_prompt') 
 async def send_prompt(ctx) : 
