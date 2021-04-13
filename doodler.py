@@ -12,6 +12,7 @@ bot.game = discord.Game("Driving Snooze Crazy")
 
 @tasks.loop(seconds = 3600 )
 async def send_prompts():
+    await asyncio.sleep(10)
     await bot.wait_until_ready()
     rn = datetime.datetime.now()
     good_times = [0, 2, 4]
