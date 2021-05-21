@@ -7,6 +7,7 @@ from discord.ext import commands, tasks
 bot = commands.Bot(command_prefix='?')
 bot.hour = 22
 bot.promptlist = ["test"]
+bot.pause = False
 
 
 def load_in_prompts():
@@ -31,6 +32,24 @@ async def send_prompts():
         await send_prompt()
         save_to_file()
 
+@bot.command(name='pause'): 
+async def pause(ctx): 
+    pause = True
+    await ctx.send("Paused prompt sending!")
+    
+@bot.command(name='unpause'): 
+async def unpause(ctx): 
+    pause = False
+    await ctx.send("Resumed prompt sending!")
+
+@bot.command(name='pause_status):  
+async def status_of_pause(ctx):
+    if pause: 
+        string = "pause"
+    else:
+        string = "unpaused"             
+    await ctx.send(f"The prompt sending loop is currently {string}!")     
+        
 @bot.command(name='force_prompt')
 async def force_prompt(ctx):
     send_prompt(ctx)
