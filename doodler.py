@@ -5,13 +5,14 @@ import asyncio
 import discord
 from discord.ext import commands, tasks
 bot = commands.Bot(command_prefix='?')
-bot.hour = 22
-bot.promptlist = ["test"]
+
+bot.hour = 7
+bot.promptlist = []
 bot.pause = False
 
 
 def load_in_prompts():
-    f = open("prompts.txt", "w")
+    f = open("prompts.txt", "w+")
     bot.promptlist = f.read().split("\n")
     del bot.promptlist[len(bot.promptlist)-1] #get rid of trailing whitespace
     f.close()
@@ -32,17 +33,17 @@ async def send_prompts():
         await send_prompt()
         save_to_file()
 
-@bot.command(name='pause'): 
+@bot.command(name='pause')
 async def pause(ctx): 
     pause = True
     await ctx.send("Paused prompt sending!")
     
-@bot.command(name='unpause'): 
+@bot.command(name='unpause')
 async def unpause(ctx): 
     pause = False
     await ctx.send("Resumed prompt sending!")
 
-@bot.command(name='pause_status):  
+@bot.command(name='pause_status)
 async def status_of_pause(ctx):
     if pause: 
         string = "pause"
@@ -197,7 +198,37 @@ async def load_prompts(ctx, *args):
         await ctx.send(response)
     save_to_file()
 
-
+@bot.command(name = 'back_up') 
+async def back_up(ctx) : 
+    channel = bot.get_channel(818546231868391454)
+    
+    if len(bot.promptlist) == 0 : 
+        await channel.send("Nothing to back up!")
+        return
+    response = "**Backup**: \n" + str(bot.promptlist).replace('[', '').replace(']', '')
+    if len(response) <= 1980 :
+        await channel.send(response) 
+    else : 
+        response_list = bot.promptlist
+        current_char = 0 
+        count = 0
+        count1 = 0 
+        should_continue = True
+        while should_continue :
+            current_response = ""         
+            for i in range(25) :
+                try :
+                    current_response += '\"'
+                    current_response += response_list[count1].replace('\'', "")
+                    current_response += '\" '
+                    count1 += 1
+                except : 
+                    await channel.send(current_response)
+                    return
+            count += 1
+            current_response = current_response + "(" + str(count) + ")"
+            await channel.send(current_response)     
+             
 @bot.command(name='num_prompts')
 async def num_prompts(ctx):
     await ctx.send("There are " + str(len(bot.promptlist)) + " prompts!")
