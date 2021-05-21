@@ -43,7 +43,7 @@ async def unpause(ctx):
     pause = False
     await ctx.send("Resumed prompt sending!")
 
-@bot.command(name='pause_status)
+@bot.command(name='pause_status')
 async def status_of_pause(ctx):
     if pause: 
         string = "pause"
