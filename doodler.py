@@ -58,13 +58,12 @@ async def send_prompt(ctx=None):
     input_channel = await bot.fetch_channel(820804818045239367)
     prompt_channel = await bot.fetch_channel(816135387339685930)
     print("Getting Called")
-    if 10 >= len(bot.promptlist) > 0:
-        await input_channel.send(f"**Warning!** Only **{len(bot.promptlist)}** prompts left!")
-    elif len(bot.promptlist) == 0:
+    if len(bot.promptlist) == 0:
         await input_channel.send(f"**CRITICAL WARNING!** 0 prompts left!!")
         return
     random_num = random.randint(0, len(bot.promptlist) - 1)
     await prompt_channel.send(bot.promptlist[random_num])
+    print(bot.promptlist[random_num])             
     del bot.promptlist[random_num]
     save_to_file()
 
