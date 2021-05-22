@@ -11,62 +11,74 @@ bot.promptlist = []
 bot.pause = False
 
 
-def load_in_prompts():
-    f = open("prompts.txt", "w+")
+async def load_in_prompts():
+    f = open("prompts.txt", "r")
     bot.promptlist = f.read().split("\n")
-    del bot.promptlist[len(bot.promptlist)-1] #get rid of trailing whitespace
+    del bot.promptlist[len(bot.promptlist)-1]
     f.close()
 
-def save_to_file():
+
+@bot.command(name="save")
+async def save_to_file(ctx):
     f = open("prompts.txt", "w")
     for prompt in bot.promptlist:
         f.write(prompt + "\n")
-        print(prompt)
+    await ctx.send("Saved!")
 
-@tasks.loop(seconds=3600)
-async def send_prompts():
-    print(bot.promptlist)
-    await bot.wait_until_ready()
+
+@tasks.loop(hours=1)
+async def send_prompts() -> None:
+    input_channel = await bot.fetch_channel(820804818045239367)
     rn = datetime.datetime.now()
-    good_days = [0, 1, 2, 3, 4, 5, 6]
-    if rn.hour == bot.hour:
+    if rn.hour == bot.hour and bot.pause == False:
         await send_prompt()
-        save_to_file()
+
+
+
+@send_prompts.before_loop
+async def before():
+    await bot.wait_until_ready()
+    await load_in_prompts()
+
 
 @bot.command(name='pause')
 async def pause(ctx): 
-    pause = True
+    bot.pause = True
     await ctx.send("Paused prompt sending!")
-    
+
+
 @bot.command(name='unpause')
 async def unpause(ctx): 
-    pause = False
+    bot.pause = False
     await ctx.send("Resumed prompt sending!")
+
 
 @bot.command(name='pause_status')
 async def status_of_pause(ctx):
-    if pause: 
-        string = "pause"
+    if bot.pause:
+        string = "paused"
     else:
         string = "unpaused"             
     await ctx.send(f"The prompt sending loop is currently {string}!")     
-        
+
+
 @bot.command(name='force_prompt')
 async def force_prompt(ctx):
     send_prompt(ctx)
 
+
 async def send_prompt(ctx=None):
     input_channel = await bot.fetch_channel(820804818045239367)
     prompt_channel = await bot.fetch_channel(816135387339685930)
-    print("Getting Called")
-    if len(bot.promptlist) == 0:
-        await input_channel.send(f"**CRITICAL WARNING!** 0 prompts left!!")
+    try:
+        random_num = random.randint(0, len(bot.promptlist) - 1)
+        await prompt_channel.send(bot.promptlist[random_num])
+        del bot.promptlist[random_num]
+    except ValueError:
+        await input_channel.send("No prompts left! How you let it get this bad, I don't know. :person_shrugging:")
         return
-    random_num = random.randint(0, len(bot.promptlist) - 1)
-    await prompt_channel.send(bot.promptlist[random_num])
-    print(bot.promptlist[random_num])             
-    del bot.promptlist[random_num]
-    save_to_file()
+    return
+
 
 
 def are_numbers(x):
@@ -76,11 +88,11 @@ def are_numbers(x):
 
 @bot.command(name='set_hour')
 async def set_hour(ctx, arg):
-    if are_numbers(arg) == False:
+    if not are_numbers(arg):
         await ctx.send(f"**Error!** Use only numbers in hour setting, please!")
     elif int(arg) > 23 or int(arg) < 0:
         await ctx.send(f"**Out of range!** Use numbers 0 - 23, with 0 being midnight.")
-    elif 0 <= int(arg) and int(arg) <= 23 and are_numbers(arg):
+    elif 0 <= int(arg) <= 23 and are_numbers(arg):
         bot.hour = arg
         await ctx.send(f"Set output hour to {arg} CST!")
 
@@ -97,7 +109,6 @@ async def force(ctx, arg):
     prompt_channel = await bot.fetch_channel(816135387339685930)
     if bot.promptlist[arg] is not None:
         await prompt_channel.send(bot.promptlist[arg])
-        save_to_file()
     else:
         await ctx.send("That is not in the promptlist!")
 
@@ -113,7 +124,6 @@ async def add(ctx, prompt):
     bot.promptlist.append(prompt)
     response = "Added " + prompt + "!"
     await ctx.send(response)
-    save_to_file()
 
 
 @bot.command(name='remove_multiple')
@@ -124,14 +134,12 @@ async def remove_multiple(ctx, *args):
         except:
             pass
     await ctx.send("Cleared requested prompts!")
-    save_to_file()
 
 
 @bot.command(name='clear_prompts')
 async def clear_prompts(ctx):
     bot.promptlist = []
     await ctx.send("Cleared all prompts!")
-    save_to_file()
 
 
 @bot.command(name='prompt')
@@ -183,7 +191,6 @@ async def remove(ctx, arg):
     else:
         response = "Nothing at position " + arg + "!"
         await ctx.send(response)
-    save_to_file
 
 @bot.command(name='load_prompts')
 async def load_prompts(ctx, *args):
@@ -196,11 +203,10 @@ async def load_prompts(ctx, *args):
         response = "I can't show you the whole list, but you can rest assured everything went well. Feel free to use " \
                    "?prompts! :wink: "
         await ctx.send(response)
-    save_to_file()
 
 @bot.command(name = 'back_up') 
 async def back_up(ctx) : 
-    channel = bot.get_channel(818546231868391454)
+    channel = bot.fetch_channel(818546231868391454)
     
     if len(bot.promptlist) == 0 : 
         await channel.send("Nothing to back up!")
@@ -214,15 +220,15 @@ async def back_up(ctx) :
         count = 0
         count1 = 0 
         should_continue = True
-        while should_continue :
+        while should_continue:
             current_response = ""         
-            for i in range(25) :
-                try :
+            for i in range(25):
+                try:
                     current_response += '\"'
                     current_response += response_list[count1].replace('\'', "")
                     current_response += '\" '
                     count1 += 1
-                except : 
+                except:
                     await channel.send(current_response)
                     return
             count += 1
@@ -234,5 +240,4 @@ async def num_prompts(ctx):
     await ctx.send("There are " + str(len(bot.promptlist)) + " prompts!")
 
 send_prompts.start()
-load_in_prompts()
 bot.run("ODIwNzg2NzI2NTA3MjQ5NzE1.YE6PNQ.eUPz98ua2cGzDW3RG29kecGN9iA")
