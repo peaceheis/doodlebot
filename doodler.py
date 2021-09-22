@@ -240,4 +240,4 @@ async def num_prompts(ctx):
     await ctx.send("There are " + str(len(bot.promptlist)) + " prompts!")
 
 send_prompts.start()
-bot.run("ODIwNzg2NzI2NTA3MjQ5NzE1.YE6PNQ.eUPz98ua2cGzDW3RG29kecGN9iA")
+bot.run(TOKEN_HERE)
